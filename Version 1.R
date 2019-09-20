@@ -43,3 +43,14 @@ nOcupados <- as.data.frame(nOcupados)
 gananMed <- read.px("http://www.ine.es/jaxi/files/_px/es/px/t14/p197/e01/evoluc/a2017/l0/01005.px?nocab=1")
 gananMed <- as.data.frame(gananMed)
 ```
+----------------SHINY APP-----------------
+
+```{r}
+ui <- navbarPage(
+  theme = shinytheme("flatly"),
+  title= "Proyecto Loreto",
+  navbarMenu("Variables",
+  )
+  )#navbarPage
+) #Ui
+```
