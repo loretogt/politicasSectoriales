@@ -96,21 +96,22 @@ ui <-navbarPage(
              mainPanel(
                tabsetPanel(
                  tabPanel(title = "En funcion del sector",
-                          h3(""),
-                          h5( ""),
                           h4("Grafico"), 
                           plotlyOutput("grafico"),
                           h4("Valores del gráfio"), 
                           tableOutput("dat")
                  ), 
                  tabPanel(title ="En función del año", 
-                          h3(" "),
-                          h5( ""),
-                          h4("Grafico"),
+                          h4("Comparación entre industrias manufacteras TIC y Servicos"),
                           plotlyOutput("difindyserv"),
-                          h4("Valores del gráfio"),
+                          h4("Comparación entre industrias comerciales TIC e Industrias de servicios TIC"),
+                          plotlyOutput("compcomserv"),
+                          h4("Industrias de servicios TIC"),
+                          plotlyOutput("servTIC"),
+                          h4("Valores del los gráficos"),
                           tableOutput("tab")
                  )
+                 
                )
              )
            )
@@ -144,7 +145,7 @@ server <- function(input, output) {
       geom_line(color="#4f94cd")+
       geom_point(color="#00688b")+
       xlab("Años")+
-      ylab("Valores absolutos ")+
+      ylab("Valores")+
       theme_classic()
     
   })
@@ -160,7 +161,54 @@ server <- function(input, output) {
     tabla1<-tabla1[1:2,];
     tabla1<-as.data.frame(tabla1);
     dat1<-t(t(tabla1[3]));
-    com1<-c("INDUSTRIAS MANUFACTURERAS TIC","SERVIIOS");
+    com1<-c("1. INDUSTRIAS MANUFACTURERAS TIC","2 SERVICIOS");
+    media1<-mean(dat1)+
+    theme(axis.text.x = element_text(angle=55, vjust=0.6))
+    
+    
+    df11 <- data.frame(com1,
+                       dat1)
+    ggplot(data=df11, aes(x=com1, y=dat1, group=1))+
+      geom_bar(stat="identity",fill="#4f94cd")+
+      xlab("Sectores")+
+      ylab("Valores ")+
+      theme_classic()
+    
+    
+  })
+    output$compcomserv <- renderPlotly({
+    tabla<-nEmpresas[nEmpresas$periodo==input$per ,];
+    tabla1<-tabla[3:4,];
+    tabla1[3]=tabla[2]-tabla[3];
+    tabla1<-as.data.frame(tabla1);
+    dat1<-t(t(tabla1[3]));
+    com1<-c("2.a INDUSTRIAS COMERCIALES TIC","2.b INDUSTRIAS DE SERVICIOS TIC");
+    media1<-mean(dat1)+
+    theme(axis.text.x = element_text(angle=55, vjust=0.6))
+    
+    
+    df11 <- data.frame(com1,
+                       dat1)
+    ggplot(data=df11, aes(x=com1, y=dat1, group=1))+
+      geom_bar(stat="identity",fill="#4f94cd")+
+      xlab("Sectores")+
+      ylab("Valores ")+
+      theme_classic()
+    
+    
+  })
+    
+  
+    output$servTIC <- renderPlotly({
+    tabla1<-nEmpresas[nEmpresas$periodo==input$per ,];
+    tabla1<-tabla1[4:8,];
+    tabla1<-as.data.frame(tabla1);
+    dat1<-t(t(tabla1[3]));
+    com1<-c("EDICIÓN DE PROGRAMAS INFORMÁTICOS          2.b.1 ", 
+            "TELECOMUNICACIONES         2.b.2", 
+            "PROGRAMACIÓN, CONSULTORÍA Y OTRAS ACTIVIDADES RELACIONADAS CON LA INFORMÁTICA            2.b.3 ",
+            "PORTALES WEB, PROCESAMIENTO DE DATOS, HOSTING Y ACTIVIDADES RELACIONADAS         2.b.4",
+            "REPARACION DE ORDENADORES Y EQUIPOS DE COMUNICACIÓN         2.b.5 ");
     media1<-mean(dat1)
     
     
@@ -168,15 +216,13 @@ server <- function(input, output) {
                        dat1)
     ggplot(data=df11, aes(x=com1, y=dat1, group=1))+
       geom_bar(stat="identity",fill="#4f94cd")+
-      xlab("Comunidades")+
-      ylab("Valores absolutos ")+
+      xlab("Sectores")+
+      ylab("Valores")+
       geom_hline(yintercept=media1, linetype="dashed", color = "coral")+
       theme_classic()+
-      theme(axis.text.x = element_text(angle=65, vjust=0.6))
-    
+      theme(axis.text.x = element_text(angle=25, vjust=0.6))
     
   })
-  
   
 }
 
