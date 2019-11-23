@@ -77,8 +77,8 @@ library(shinythemes)
 ui <-navbarPage(    
   theme = shinytheme("flatly"),
   title= "Proyecto Loreto",
-  
   tabPanel("Variables",
+           
            sidebarLayout(
              sidebarPanel(
                selectInput("var","Variables:",
@@ -105,8 +105,6 @@ ui <-navbarPage(
                  tabPanel(title ="En función del año", 
                           h4("Comparación entre industrias manufacteras TIC y Servicos"),
                           plotlyOutput("difindyserv"),
-                          h4("Comparación entre industrias comerciales TIC e Industrias de servicios TIC"),
-                          plotlyOutput("compcomserv"),
                           h4("Industrias de servicios TIC"),
                           plotlyOutput("servTIC"),
                           h4("Valores del los gráficos"),
@@ -114,9 +112,54 @@ ui <-navbarPage(
                  )
                  
                )
+               
              )
+             
            )
-  )#variables 
+  ),
+  tabPanel("Descargas",
+           selectInput("dataset", "Escoge una Variable:",width ='1000px',
+                       choices = c("Número de empresas en el sector TIC por ramas de actividad del sector TIC y periodo" ="nEmpresas", 
+                             "Cifra de negocios en el sector TIC por ramas de actividad del sector TIC y periodo" ="cifraNeg", 
+                             "Valor añadido en el sector TIC por ramas de actividad del sector TIC y periodo"= "vAñadido",
+                             "Número de ocupados en el sector TIC por ramas de actividad del sector TIC y periodo"="nOcupados")),
+           fluidRow(
+             
+             column(5, 
+                    wellPanel(
+                      h4("Descargar Variable seleccionada en Rdata"),
+                      downloadButton("descargarRdat", label = "Descargar")
+                    )
+             ),
+             column(5,
+                    wellPanel(
+                      h4("Descargar la variable seleccionada en csv"),
+                      downloadButton("descargarVariables", label = "Descargar")
+                    )
+             ),
+             column(5,
+                    wellPanel(
+                      h4("Descargar el código"),
+                      downloadButton("descargarCodigo", label = "Descargar")
+                    )
+             ),
+             
+             column(5,
+                    wellPanel(
+                      h4("Descargar el protocolo"),
+                      downloadButton("descargarProtocolo", label = "Descargar")
+                    )
+             ),
+             column(5,
+                    wellPanel(
+                      h4("Descargar el informe"),
+                      downloadButton("descargarInforme", label = "Descargar")
+                    )
+             )
+             
+           )
+           
+  )
 )#UI
 
 #Seleccion de la variable 
@@ -151,7 +194,7 @@ server <- function(input, output) {
   })
   
   output$grafico <- renderPlotly({
-     var=variable()
+    var=variable()
     graf<-var[var$Ramas.de.actividad.del.sector.TIC==input$sect  ,];
     graf<-as.data.frame(graf);
     graf1<-t(t(graf[3]));
@@ -174,14 +217,14 @@ server <- function(input, output) {
     
   })
   
-    output$difindyserv <- renderPlotly({
+  output$difindyserv <- renderPlotly({
     tabla1<-nEmpresas[nEmpresas$periodo==input$per ,];
     tabla1<-tabla1[1:2,];
     tabla1<-as.data.frame(tabla1);
     dat1<-t(t(tabla1[3]));
     com1<-c("1. INDUSTRIAS MANUFACTURERAS TIC","2 SERVICIOS");
     media1<-mean(dat1)+
-    theme(axis.text.x = element_text(angle=55, vjust=0.6))
+      theme(axis.text.x = element_text(angle=55, vjust=0.6))
     
     
     df11 <- data.frame(com1,
@@ -194,30 +237,10 @@ server <- function(input, output) {
     
     
   })
-    output$compcomserv <- renderPlotly({
-    tabla<-nEmpresas[nEmpresas$periodo==input$per ,];
-    tabla1<-tabla[3:4,];
-    tabla1[3]=tabla[2]-tabla[3];
-    tabla1<-as.data.frame(tabla1);
-    dat1<-t(t(tabla1[3]));
-    com1<-c("2.a INDUSTRIAS COMERCIALES TIC","2.b INDUSTRIAS DE SERVICIOS TIC");
-    media1<-mean(dat1)+
-    theme(axis.text.x = element_text(angle=55, vjust=0.6))
-    
-    
-    df11 <- data.frame(com1,
-                       dat1)
-    ggplot(data=df11, aes(x=com1, y=dat1, group=1))+
-      geom_bar(stat="identity",fill="#4f94cd")+
-      xlab("Sectores")+
-      ylab("Valores ")+
-      theme_classic()
-    
-    
-  })
-    
+
   
-    output$servTIC <- renderPlotly({
+  
+  output$servTIC <- renderPlotly({
     tabla1<-nEmpresas[nEmpresas$periodo==input$per ,];
     tabla1<-tabla1[4:8,];
     tabla1<-as.data.frame(tabla1);
@@ -241,6 +264,69 @@ server <- function(input, output) {
       theme(axis.text.x = element_text(angle=25, vjust=0.6))
     
   })
+    ######### DESCARGAS ########
+  
+
+  output$descargarRdat <- downloadHandler(
+    filename = "variable.Rdata",
+    content = function(file) {
+      if (input$dataset == "nEmpresas"){
+        write.table(nEmpresas[], file, row.names = FALSE)
+      }
+      if (input$dataset == "cifraNeg"){
+        write.table(cifraNeg[], file, row.names = FALSE)
+      }
+      if (input$dataset == "vAñadido"){
+        write.table(vAñadido[], file, row.names = FALSE)
+      }
+      if (input$dataset == "nOcupados"){
+        write.table(nOcupados[], file, row.names = FALSE)
+      }
+      
+    }
+  )
+  
+  #Aqui hay que poner la direccion donde se encuentra el codigo en el ordenador 
+  output$descargarCodigo <- downloadHandler(
+    filename = "codigo.R",
+    content = function(file) {
+      file.copy("", file)
+    }
+  )
+  #Aqui hay que poner la direccion donde se encuentra el codigo en el ordenador 
+  output$ descargarProtocolo <- downloadHandler(
+    filename = "protocolo.html",
+    content = function(file) {
+      file.copy("", file)
+    }
+  )
+  #Aqui hay que poner la direccion donde se encuentra el codigo en el ordenador 
+  output$ descargarInforme <- downloadHandler(
+    filename = "informe.pdf",
+    content = function(file) {
+      file.copy("", file)
+    }
+  )
+  
+  
+  output$descargarVariables <- downloadHandler(
+    filename = "variable.csv",
+    content = function(file) {
+      if (input$dataset == "nEmpresas"){
+        write.csv(nEmpresas[], file, row.names = FALSE)
+      }
+      if (input$dataset == "cifraNeg"){
+        write.csv(cifraNeg[], file, row.names = FALSE)
+      }
+      if (input$dataset == "vAñadido"){
+        write.csv(vAñadido[], file, row.names = FALSE)
+      }
+      if (input$dataset == "nOcupados"){
+        write.csv(nOcupados[], file, row.names = FALSE)
+      }
+      
+    }
+  )
   
 }
 
