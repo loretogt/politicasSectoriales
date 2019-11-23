@@ -1,5 +1,5 @@
 ----------------INFORMACION-----------------
-Autor: Loreto Garcia Tejada
+Autor: Loreto Garcia Tejada-
 Titulación: Doble grado en II + ADE - 2019/2020
 Asignatura: Politicas sectoriales
 Versión: 1.0
