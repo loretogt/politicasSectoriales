@@ -1,5 +1,5 @@
 ----------------INFORMACION-----------------
-Autor: Loreto Garcia Tejada-
+Autor: Loreto Garcia Tejada
 Titulación: Doble grado en II + ADE - 2019/2020
 Asignatura: Politicas sectoriales
 Versión: 1.0
@@ -86,8 +86,9 @@ ui <-navbarPage(
                              "Cifra de negocios en el sector TIC por ramas de actividad del sector TIC y periodo" ="cifraNeg", 
                              "Valor añadido en el sector TIC por ramas de actividad del sector TIC y periodo"= "vAñadido",
                              "Número de ocupados en el sector TIC por ramas de actividad del sector TIC y periodo"="nOcupados")),
-               selectInput("per","Periodo:",choices = c(periodo)),
-               selectInput("sect","Sectores:",choices = c(sectores[2]))
+               selectInput("sect","Sectores:",choices = c(sectores[2])),
+               selectInput("per","Periodo:",choices = c(periodo))
+               
              ),
              
              
@@ -123,18 +124,35 @@ server <- function(input, output) {
   
   #selección de la variable
   variable <- reactive ({
-    input$var
+    # if (input$var== "nEmpresas"){
+    #   filtrado= filter(nEmpresas, input$sect %in% nEmpresas$Ramas.de.actividad.del.sector.TIC )
+    # }
+    if (input$var== "nEmpresas"){
+      filtrado=nEmpresas
+    }
+    if (input$var== "cifraNeg"){
+      filtrado=cifraNeg
+    }
+    if (input$var== "vAñadido"){
+      filtrado=vAñadido
+    }
+    if (input$var== "nOcupados"){
+      filtrado=nOcupados
+    }
+    
+    return(filtrado)
   })
   
   output$dat <- renderTable({
-    vari<-toString(variable())
-    tabla<-nEmpresas[nEmpresas$Ramas.de.actividad.del.sector.TIC==input$sect  ,];
+    var=variable()
+    tabla<-var[var$Ramas.de.actividad.del.sector.TIC==input$sect  ,];
     tabla<-subset(tabla, select= c("periodo", "value"))
     
   })
   
   output$grafico <- renderPlotly({
-    graf<-nEmpresas[nEmpresas$Ramas.de.actividad.del.sector.TIC==input$sect  ,];
+     var=variable()
+    graf<-var[var$Ramas.de.actividad.del.sector.TIC==input$sect  ,];
     graf<-as.data.frame(graf);
     graf1<-t(t(graf[3]));
     años1<-t(t(periodo))
