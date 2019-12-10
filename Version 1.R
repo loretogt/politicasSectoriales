@@ -170,25 +170,26 @@ server <- function(input, output) {
     # if (input$var== "nEmpresas"){
     #   filtrado= filter(nEmpresas, input$sect %in% nEmpresas$Ramas.de.actividad.del.sector.TIC )
     # }
-    if (input$var== "nEmpresas"){
-      filtrado=nEmpresas
+    if (input$var== "nEmpresas") {
+      filtrado = nEmpresas
     }
-    if (input$var== "cifraNeg"){
-      filtrado=cifraNeg
+    if (input$var == "cifraNeg") {
+      filtrado = cifraNeg
     }
-    if (input$var== "vAñadido"){
-      filtrado=vAñadido
+    if (input$var == "vAñadido") {
+      filtrado = vAñadido
     }
-    if (input$var== "nOcupados"){
-      filtrado=nOcupados
+    if (input$var == "nOcupados") {
+      filtrado = nOcupados
     }
     
-    return(filtrado)
+    return(filtrado
+    )
   })
   
   output$dat <- renderTable({
     var=variable()
-    tabla<-var[var$Ramas.de.actividad.del.sector.TIC==input$sect  ,];
+    tabla<-var[var$Ramas.de.actividad.del.sector.TIC==input$sect,];
     tabla<-subset(tabla, select= c("periodo", "value"))
     
   })
@@ -212,13 +213,15 @@ server <- function(input, output) {
   })
   
   output$tab <- renderTable({
-    tabla<-nEmpresas[nEmpresas$periodo==input$per ,];
+    var=variable()
+    tabla<-var[var$periodo==input$per ,];
     tabla<-subset(tabla, select=c("Ramas.de.actividad.del.sector.TIC", "value"))
     
   })
   
   output$difindyserv <- renderPlotly({
-    tabla1<-nEmpresas[nEmpresas$periodo==input$per ,];
+    var=variable()
+    tabla1<-var[var$periodo==input$per ,];
     tabla1<-tabla1[1:2,];
     tabla1<-as.data.frame(tabla1);
     dat1<-t(t(tabla1[3]));
@@ -241,7 +244,8 @@ server <- function(input, output) {
   
   
   output$servTIC <- renderPlotly({
-    tabla1<-nEmpresas[nEmpresas$periodo==input$per ,];
+    var=variable()
+    tabla1<-var[var$periodo==input$per ,];
     tabla1<-tabla1[4:8,];
     tabla1<-as.data.frame(tabla1);
     dat1<-t(t(tabla1[3]));
